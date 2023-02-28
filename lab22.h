@@ -74,6 +74,7 @@ void Unit::showStatus(){
 
 void Unit::newTurn(){
 	guard_on = false; 
+	dodge_on = true;
 }
 
 int Unit::beAttacked(int oppatk){
@@ -97,6 +98,14 @@ int Unit::heal(){
 	if(hp + h > hpmax) h = hpmax - hp;
 	hp = hp + h;
 	return h;
+}
+
+bool Unit::dodge(){
+	int dodgeLuck =(rand()+1)%2;
+	if (dodgeLuck == 1) dodge_on=true;
+	else dodge_on=false;
+
+	if(dodge_on=1 && )
 }
 
 void Unit::guard(){
