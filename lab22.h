@@ -24,7 +24,7 @@ class Unit{
 		int atk;
 		int def;
 		bool guard_on;
-		bool dodge_on; 
+		bool dodge_on=0; 
 		Equipment *equipment; 
 	public:			
 		Unit(string,string); 
@@ -74,7 +74,7 @@ void Unit::showStatus(){
 
 void Unit::newTurn(){
 	guard_on = false; 
-	dodge_on = true;
+	dodge_on = false;
 }
 
 int Unit::beAttacked(int oppatk){
@@ -82,7 +82,16 @@ int Unit::beAttacked(int oppatk){
 	if(oppatk > def){
 		dmg = oppatk-def;	
 		if(guard_on) dmg = dmg/3;
-	}	
+	}
+	if (dodge_on){ 
+	    bool n=rand()%2;
+		if(n){
+			dmg=0;
+		}else{
+			dmg*=2;
+		}
+	}
+		
 	hp -= dmg;
 	if(hp <= 0){hp = 0;}
 	
@@ -98,14 +107,6 @@ int Unit::heal(){
 	if(hp + h > hpmax) h = hpmax - hp;
 	hp = hp + h;
 	return h;
-}
-
-bool Unit::dodge(){
-	int dodgeLuck =(rand()+1)%2;
-	if (dodgeLuck == 1) dodge_on=true;
-	else dodge_on=false;
-
-	if(dodge_on=1 && )
 }
 
 void Unit::guard(){
@@ -177,3 +178,47 @@ void playerLose(){
 	cout << "*******************************************************\n";
 };
 
+int Unit::ultimateAttack(Unit &opp){
+	return opp.beAttacked(2*atk);
+}
+
+void Unit::dodge(){
+	dodge_on=1;
+}
+
+Equipment::Equipment(int h,int a,int d){
+	hpmax=h;
+	atk=a;
+	def=d;
+}
+
+vector<int> Equipment::getStat(){
+	vector<int> stat;
+	stat.push_back(hpmax);
+	stat.push_back(atk);
+	stat.push_back(def);
+	return stat;
+}
+
+void Unit::equip(Equipment *w){
+
+	if(equipment == NULL){
+		equipment = w;
+		vector<int> stat=w->getStat();
+		hpmax += stat[0];
+		atk += stat[1];
+		def += stat[2];
+	}else{
+		vector<int> stat=equipment->getStat();
+		hpmax -= stat[0];
+		atk -= stat[1];
+		def -= stat[2];
+
+		equipment = w;
+		stat=equipment->getStat();
+		hpmax += stat[0];
+		atk += stat[1];
+		def += stat[2];
+		if(hp>hpmax) hp=hpmax;
+	}
+}
